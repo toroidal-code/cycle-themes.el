@@ -59,4 +59,6 @@ If you find that it's skipping themes in your list, make sure that all of your t
 Thanks
 ------
 
-This package was inspired by a [stackoverflow answer](http://stackoverflow.com/a/18796138). I thought that snippet was great, but thought it really deserved to be made into a true package. So I did.
+This package was inspired by a [stackoverflow 
+answer](http://stackoverflow.com/a/18796138). I thought that snippet was great, and 
+that it really deserved to be made into a true package. So I did.

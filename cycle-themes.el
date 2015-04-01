@@ -1,5 +1,5 @@
 
-;;; cycle-themes.el --- Minor mod for theme cycling
+;;; cycle-themes.el --- Minor mode for theme cycling
 
 ;; Copyright (C) 2015 Katherine Whitlock
 ;;
@@ -17,8 +17,7 @@
 ;;; Installation
 
 ;; In your emacs config, define a list of themes you want to be
-;; able to switch between. This should ideally happen before
-;;`require`ing cycle-themes. Then, enable the global minor mode.
+;; able to switch between. Then, enable the global minor mode.
 ;;
 ;;     (setq cycle-themes-theme-list
 ;;           '(leuven monokai solarized-dark))
@@ -52,7 +51,8 @@
 
 ;;; Code:
 
-(require 'cl-lib)
+(eval-when-compile 
+  (require 'cl-lib))
 
 (defgroup cycle-themes nil
   "The cycle-themes group"
