@@ -1,4 +1,3 @@
-
 ;;; cycle-themes.el --- Minor mode for theme cycling
 
 ;; Copyright (C) 2015 Katherine Whitlock
@@ -6,6 +5,7 @@
 ;; Authors: Katherine Whitlock <toroidalcode@gmail.com>
 ;; URL: http://github.com/toroidal-code/cycle-themes.el
 ;; Version: 1.0
+;; Package-Requires: ((cl-lib "0.5"))
 ;; Keywords: Themes, Utility, Global Minor Mode
 
 ;; This file is not part of GNU Emacs.
@@ -16,8 +16,8 @@
 
 ;;; Installation
 
-;; In your emacs config, define a list of themes you want to be
-;; able to switch between. Then, enable the global minor mode.
+;; In your Emacs config, define a list of themes you want to be
+;; able to switch between.  Then, enable the global minor mode.
 ;;
 ;;     (setq cycle-themes-theme-list
 ;;           '(leuven monokai solarized-dark))
@@ -51,28 +51,26 @@
 
 ;;; Code:
 
-(eval-when-compile 
+(eval-when-compile
   (require 'cl-lib))
 
 (defgroup cycle-themes nil
   "The cycle-themes group"
-  :group 'emacs
+  :group 'appearance
   :prefix "cycle-themes-")
 
 (defcustom cycle-themes-after-cycle-hook nil
-  "Hooks that are run after switching themes"
+  "Hooks that are run after switching themes."
   :group 'cycle-themes
   :type 'hook)
 
 (defcustom cycle-themes-theme-list (custom-available-themes)
-  "The list of themes to cycle through 
-on calling `cycle-themes'"
+  "The list of themes to cycle through on calling `cycle-themes'."
   :group 'cycle-themes
   :type '(list symbol))
 
 (defcustom cycle-themes-allow-multiple-themes nil
-  "Whether to allow the application of 
-more than one theme at once"
+  "Whether to allow the application of more than one theme at once."
   :group 'cycle-themes
   :type 'boolean)
 
@@ -80,9 +78,9 @@ more than one theme at once"
   "Used with multiple theme layering.")
 
 (defun cycle-themes-get-next-valid-theme ()
-  "Get the next valid theme from the list"
+  "Get the next valid theme from the list."
   ;; save our starting theme for a infinite-loop check
-  ;; if there's no theme applied, 
+  ;; if there's no theme applied,
   (let* ((start-theme (or (first custom-enabled-themes)
                           (car (last cycle-themes-theme-list))))
          (current-theme start-theme))
@@ -103,7 +101,7 @@ more than one theme at once"
 
 
 (defun cycle-themes ()
-  "Cycle to the next theme"
+  "Cycle to the next theme."
   (interactive)
   (let ((new-theme (cycle-themes-get-next-valid-theme))
         (current-theme (first custom-enabled-themes))
@@ -125,12 +123,12 @@ more than one theme at once"
             (define-key map (kbd "C-c C-t") 'cycle-themes)
             map)
   :global t
-  (progn    
+  (progn
     (unless cycle-themes-allow-multiple-themes
       ;; remove any lingering themes other than the primary
       (dolist (theme (cdr custom-enabled-themes))
         (disable-theme theme)))
-    ;; if there are no themes enabled, enable 
+    ;; if there are no themes enabled, enable
     ;; the first one in the list
     (if (null custom-enabled-themes)
         (cycle-themes)
