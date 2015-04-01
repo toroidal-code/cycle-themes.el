@@ -4,7 +4,7 @@ Because switching between your themes shouldn't be so damn hard
 How it works
 ------------
 
-Define a list of themes you want to be able to switch between. This should ideally happen before `require`ing cycle-themes (see Hooks section). Then, enable the global minor mode.
+Define a list of themes you want to be able to switch between. This should ideally happen before `require`ing cycle-themes. Then, enable the global minor mode.
 
 ```elisp
 (setq cycle-themes-theme-list
@@ -39,7 +39,7 @@ Additionally, there is a custom variable for attaching your own hooks to be run 
                 (set-face-attribute 'fringe frame 
                    :background (face-background 'default)))))
 ```
-If you set the theme list and add all of your hooks before calling `cycle-themes-mode`, it will automatically enable the first theme in the list and run all of your hooks.
+If you add all of your hooks before calling `cycle-themes-mode`, it will automatically enable the first theme in the list and run all of your hooks.
 
 Caveats
 -------
