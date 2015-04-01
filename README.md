@@ -1,10 +1,12 @@
-# cycle-themes.el
+cycle-themes.el
+===============
+
 Because switching between your themes shouldn't be so damn hard
 
 How it works
 ------------
 
-Define a list of themes you want to be able to switch between. This should ideally happen before `require`ing cycle-themes. Then, enable the global minor mode.
+Define a list of themes you want to be able to switch between. Then, enable the global minor mode. If you don't list any themes, we default to switching between all the ones emacs knows about.
 
 ```elisp
 (setq cycle-themes-theme-list
@@ -57,4 +59,4 @@ If you find that it's skipping themes in your list, make sure that all of your t
 Thanks
 ------
 
-Originally this idea came from a [stackoverflow answer](http://stackoverflow.com/a/18796138). I thought that snippet was great, but thought it really deserved to be made into a true package. So I did.
+This package was inspired by a [stackoverflow answer](http://stackoverflow.com/a/18796138). I thought that snippet was great, but thought it really deserved to be made into a true package. So I did.

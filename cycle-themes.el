@@ -64,51 +64,58 @@
   :group 'cycle-themes
   :type 'hook)
 
-(defcustom cycle-themes-theme-list nil
+(defcustom cycle-themes-theme-list (custom-available-themes)
   "The list of themes to cycle through 
 on calling `cycle-themes'"
   :group 'cycle-themes
   :type '(list symbol))
 
-(defcustom cycle-themes-current-theme
-  (unless (or (null cycle-themes-theme-list)
-              (not (custom-theme-p (car cycle-themes-theme-list))))
-    (car cycle-themes-theme-list))
-  "Our current theme"
-  :type 'symbol
-  :group 'cycle-themes)
+(defcustom cycle-themes-allow-multiple-themes nil
+  "Whether to allow the application of 
+more than one theme at once"
+  :group 'cycle-themes
+  :type 'boolean)
+
+(defconst last-theme-set custom-enabled-themes
+  "Used with multiple theme layering.")
+
+(defun cycle-themes-get-next-valid-theme ()
+  "Get the next valid theme from the list"
+  ;; save our starting theme for a infinite-loop check
+  ;; if there's no theme applied, 
+  (let* ((start-theme (or (first custom-enabled-themes)
+                          (car (last cycle-themes-theme-list))))
+         (current-theme start-theme))
+    ;; do-while
+    (while
+        (progn
+          ;; Fancy way to move to the next theme
+          ;; with modular arithmetic so we never reach the end.
+          (setq current-theme
+                (nth (mod (1+ (cl-position current-theme cycle-themes-theme-list))
+                          (length cycle-themes-theme-list))
+                     cycle-themes-theme-list))
+          ;; Make sure we didn't loop all the way through
+          (when (eq current-theme start-theme)
+            (error "No valid themes in cycle-themes-theme-list"))
+          (not (custom-theme-p current-theme))))
+    current-theme))
+
 
 (defun cycle-themes ()
-  "Cycle through a list of themes, my-themes"
+  "Cycle to the next theme"
   (interactive)
-  (cond ((and cycle-themes-theme-list cycle-themes-current-theme)
-         (progn
-           (when (custom-theme-p cycle-themes-current-theme)
-             (disable-theme cycle-themes-current-theme))
-           ;; move to the next valid theme in the list
-           (let ((start-theme cycle-themes-current-theme))
-             (while (progn
-                      ;; Fancy way to move to the next theme
-                      ;; with modular arithmetic so we never reach the end.
-                      (setq cycle-themes-current-theme
-                            (nth (mod (1+ (cl-position cycle-themes-current-theme cycle-themes-theme-list))
-                                      (length cycle-themes-theme-list))
-                                 cycle-themes-theme-list))
-                      ;; Make sure we didn't loop all the way through
-                      (when (eq cycle-themes-current-theme start-theme)
-                        (error "No valid themes in cycle-themes-theme-list"))
-                      (not (custom-theme-p cycle-themes-current-theme)))))
-           ;; Load the theme we found.
-           (load-theme cycle-themes-current-theme t)
-           (run-hooks 'cycle-themes-after-cycle-hook)))
-        
-        ;; There isn't a current theme, but we've got a valid list
-        ((and (not cycle-themes-current-theme) cycle-themes-theme-list)
-         (progn (setq cycle-themes-current-theme (car cycle-themes-theme-list))
-                (cycle-themes)))
-
-        ;; No themes in the cycle list
-        (t (error "No themes in cycle-themes-list"))))
+  (let ((new-theme (cycle-themes-get-next-valid-theme))
+        (current-theme (first custom-enabled-themes))
+        (current-theme-set custom-enabled-themes))
+    ;; disable the current theme only if we want multiple themes
+    ;; and we had it before
+    (unless (and cycle-themes-allow-multiple-themes
+                 (member current-theme last-theme-set))
+      (disable-theme current-theme))
+    (load-theme new-theme t)
+    (setq last-theme-set current-theme-set)
+    (run-hooks 'cycle-themes-after-cycle-hook)))
 
 ;;;###autoload
 (define-minor-mode cycle-themes-mode
@@ -118,10 +125,16 @@ on calling `cycle-themes'"
             (define-key map (kbd "C-c C-t") 'cycle-themes)
             map)
   :global t
-  (when (and (not (null cycle-themes-current-theme))
-            (custom-theme-p cycle-themes-current-theme))
-    (load-theme cycle-themes-current-theme)
-    (run-hooks 'cycle-themes-after-cycle-hook)))
+  (progn    
+    (unless cycle-themes-allow-multiple-themes
+      ;; remove any lingering themes other than the primary
+      (dolist (theme (cdr custom-enabled-themes))
+        (disable-theme theme)))
+    ;; if there are no themes enabled, enable 
+    ;; the first one in the list
+    (if (null custom-enabled-themes)
+        (cycle-themes)
+      (run-hooks 'cycle-themes-after-cycle-hook))))
 
 (provide 'cycle-themes)
 ;;; cycle-themes.el ends here
