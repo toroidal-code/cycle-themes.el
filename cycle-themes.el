@@ -1,5 +1,5 @@
 
-;;; cycle-themes.el --- Major mode for editing J programs
+;;; cycle-themes.el --- Minor mod for theme cycling
 
 ;; Copyright (C) 2015 Katherine Whitlock
 ;;
