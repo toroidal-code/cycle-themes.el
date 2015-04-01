@@ -36,7 +36,8 @@ Additionally, there is a custom variable for attaching your own hooks to be run 
 (add-hook 'cycle-themes-after-cycle-hook
           #'(lambda ()
               (dolist (frame (frame-list))
-                (set-face-attribute 'fringe frame :background (face-background 'default)))))
+                (set-face-attribute 'fringe frame 
+                   :background (face-background 'default)))))
 ```
 If you set the theme list and add all of your hooks before calling `cycle-themes-mode`, it will automatically enable the first theme in the list and run all of your hooks.
 
