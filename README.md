@@ -41,6 +41,19 @@ Additionally, there is a custom variable for attaching your own hooks to be run 
 ```
 If you set the theme list and add all of your hooks before calling `cycle-themes-mode`, it will automatically enable the first theme in the list and run all of your hooks.
 
+Caveats
+-------
+
+If you find that it's skipping themes in your list, make sure that all of your themes are installed and loaded properly. This is especially important for users of `use-package`, as it will `require` the theme, but not actually
+`load` it into emacs' list of valid themes (which makes `(custom-theme-p my-theme)` return `nil`). 
+
+```elisp
+(use-package solarized-theme
+  :ensure t
+  :config (progn (load-theme 'solarized-dark t t)
+                 (load-theme 'solarized-light t t)))
+```
+
 Thanks
 ------
 
