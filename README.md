@@ -17,7 +17,7 @@ Define a list of themes you want to be able to switch between. Then, enable the 
 
 ```
 
-That's it! Now, you can switch between your themes by calling `M-x cycle-themes`, or with the (easily re-definable) binding of `C-c C-t`. That's it!
+That's it! Now, you can switch between your themes by calling `M-x cycle-themes`, or with the (easily re-definable) binding of `C-c C-t`.
 
 If you use [use-package](https://github.com/jwiegley/use-package), it'll look something like this:
 
