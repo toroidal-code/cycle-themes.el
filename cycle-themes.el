@@ -1,4 +1,4 @@
-;;; cycle-themes.el --- Minor mode for theme cycling
+;;; cycle-themes.el --- A global minor mode to make switching themes easier
 
 ;; Copyright (C) 2015 Katherine Whitlock
 ;;
