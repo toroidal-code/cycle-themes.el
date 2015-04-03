@@ -41,7 +41,7 @@ Additionally, there is a custom variable for attaching your own hooks to be run 
                 (set-face-attribute 'fringe frame 
                    :background (face-background 'default)))))
 ```
-If you add all of your hooks before calling `cycle-themes-mode`, it will automatically enable the first theme in the list and run all of your hooks.
+If you add any hooks and call `cycle-themes-mode` anywhere in your init file, it will automatically enable the first theme in the list and run all of your hooks.
 
 Caveats
 -------
