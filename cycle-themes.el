@@ -74,8 +74,11 @@
   :group 'cycle-themes
   :type 'boolean)
 
-(defconst last-theme-set custom-enabled-themes
+(defconst cycle-themes-last-theme-set custom-enabled-themes
   "Used with multiple theme layering.")
+
+(defconst cycle-themes-first-start t
+  "load-theme reapplies all minor-modes, so we need this to avoid a stack overflow.")
 
 (defun cycle-themes-get-next-valid-theme ()
   "Get the next valid theme from the list."
@@ -109,10 +112,10 @@
     ;; disable the current theme only if we want multiple themes
     ;; and we had it before
     (unless (and cycle-themes-allow-multiple-themes
-                 (member current-theme last-theme-set))
+                 (member current-theme cycle-themes-last-theme-set))
       (disable-theme current-theme))
     (load-theme new-theme t)
-    (setq last-theme-set current-theme-set)
+    (setq cycle-themes-last-theme-set current-theme-set)
     (run-hooks 'cycle-themes-after-cycle-hook)))
 
 ;;;###autoload
@@ -124,15 +127,28 @@
             map)
   :global t
   (progn
-    (unless cycle-themes-allow-multiple-themes
-      ;; remove any lingering themes other than the primary
-      (dolist (theme (cdr custom-enabled-themes))
-        (disable-theme theme)))
-    ;; if there are no themes enabled, enable
-    ;; the first one in the list
-    (if (null custom-enabled-themes)
-        (cycle-themes)
-      (run-hooks 'cycle-themes-after-cycle-hook))))
+    ;; remove any lingering themes other than the primary
+    (dolist (theme (cl-set-difference (custom-available-themes)
+                                      custom-enabled-themes))
+      (disable-theme theme))
+
+    ;; If we _aren't_ already trying to start up
+    (when cycle-themes-first-start
+      (setq cycle-themes-first-start nil)
+
+      ;; if there are no themes enabled, enable
+      ;; the first one in the list
+      (if (null custom-enabled-themes)
+          (add-hook 'emacs-startup-hook
+                    #'(lambda ()
+                        (load-theme (car cycle-themes-theme-list))
+                        (run-hooks 'cycle-themes-after-cycle-hook)))
+        
+        ;; otherwise, ensure they're _actually_ loaded
+        (add-hook 'emacs-startup-hook #'(lambda ()
+                                          (dolist (theme (reverse custom-enabled-themes))
+                                            (load-theme theme))
+                                          (run-hooks 'cycle-themes-after-cycle-hook)))))))
 
 (provide 'cycle-themes)
 ;;; cycle-themes.el ends here
